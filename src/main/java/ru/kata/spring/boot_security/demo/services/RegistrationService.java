@@ -41,12 +41,9 @@ public class RegistrationService {
 
     @Transactional
     public void update(long id, Person person) {
+        Person byId1 = peopleRepository.getById(id);
         person.setId(id);
-        Optional<Role> byId = roleRepository.findById((byte) 1);
-        if (byId.isEmpty()) {
-            throw new RuntimeException("Role Not found exception");
-        }
-        person.createRoles(byId.get());
+        person.setRoles(byId1.getRoles());
         person.setPassword(passwordEncoder.encode(person.getPassword()));
         peopleRepository.save(person);
     }

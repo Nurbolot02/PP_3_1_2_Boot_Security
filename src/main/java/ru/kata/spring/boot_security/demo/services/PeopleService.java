@@ -22,16 +22,6 @@ public class PeopleService implements UserDetailsService {
         this.peopleRepository = peopleRepository;
     }
 
-    public boolean isAdminOrPerson(Authentication authentication, long id) {
-        Person person = (Person) authentication.getPrincipal();
-        boolean isAdmin = Objects.requireNonNull(person).getRoles().stream().map(x -> x.getRole().equals("ROLE_ADMIN")).findAny().orElse(false);
-        Person per = findOne(id);
-        if (person.getPassword().equals(per.getPassword()) || isAdmin) {
-            return true;
-        }
-        return false;
-    }
-
     public List<Person> findAll() {
         return peopleRepository.findAll();
     }
@@ -62,9 +52,9 @@ public class PeopleService implements UserDetailsService {
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Person> byName = peopleRepository.findByName(username);
+        Optional<Person> byName = peopleRepository.findByEmail(username);
         if (byName.isEmpty()) {
-            throw new UsernameNotFoundException(String.format("User with name: %s not found", username));
+            throw new UsernameNotFoundException(String.format("User with email: %s not found", username));
         }
         return byName.get();
     }
