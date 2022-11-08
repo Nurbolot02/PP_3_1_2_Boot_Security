@@ -305,17 +305,18 @@
 
     <section class="section dashboard">
         <div class="row">
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">User table</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/index2">New user</a>
-                </li>
-            </ul>
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
+                            type="button" role="tab" aria-controls="nav-home" aria-selected="true">User table
+                    </button>
+                    <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+                            type="button" role="tab" aria-controls="nav-profile" aria-selected="false">New user
+                    </button>
+                </div>
+            </nav>
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active tabcontent" id="nav-home" role="tabpanel"
-                     aria-labelledby="nav-home-tab">
+                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                     <table class="table table-stripped">
                         <thead>
                         <tr>
@@ -341,13 +342,13 @@
                                 </div>
                             </td>
                             <td>
-                                <a class="btn btn-warning" data-bs-toggle="modal"
+                                <a class="btn btn-info" data-bs-toggle="modal"
                                    data-bs-target="#editModal" th:href="@{/admin/{id}(id=${persont.getId()})}"
                                 >Edit</a>
 
-<!--                                                                <button type="button" class="btn btn-info" data-bs-toggle="modal"-->
-<!--                                                                        data-bs-target="#editModal">Edit-->
-<!--                                                                </button>-->
+                                <!--                                <button type="button" class="btn btn-info" data-bs-toggle="modal"-->
+                                <!--                                        data-bs-target="#editModal">Edit-->
+                                <!--                                </button>-->
                             </td>
 
 
@@ -463,6 +464,134 @@
                     <!--                        </div>-->
                     <!--                    </form>-->
 
+                </div>
+                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <main>
+                        <div class="container">
+
+                            <section
+                                    class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+                                <div class="container">
+                                    <div class="row justify-content-center">
+                                        <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+
+                                            <div class="card mb-3">
+
+                                                <div class="card-body">
+
+                                                    <div class="pt-4 pb-2">
+                                                        <h5 class="card-title text-center pb-0 fs-4">Create an
+                                                            Account</h5>
+                                                        <p class="text-center small">Enter your personal details to
+                                                            create account</p>
+                                                    </div>
+
+                                                    <form class="row g-3 needs-validation" th:method="POST"
+                                                          th:action="@{/auth/registration}" th:object="${person}"
+                                                          novalidate>
+                                                        <div class="col-12">
+                                                            <label for="firstName" class="form-label">Your Name</label>
+                                                            <input type="text" class="form-control"
+                                                                   th:field="*{firstName}" id="firstName"
+                                                                   placeholder="firstName" required/>
+                                                            <div style="color:red"
+                                                                 th:if="${#fields.hasErrors('firstName')}"
+                                                                 th:errors="*{firstName}">firstName Error
+                                                            </div>
+                                                            <div class="invalid-feedback">Please, enter your name!</div>
+                                                        </div>
+
+                                                        <div class="col-12">
+                                                            <label for="lastName" class="form-label">Your Last
+                                                                Name</label>
+                                                            <input type="text" class="form-control"
+                                                                   th:field="*{lastName}" id="lastName"
+                                                                   placeholder="last name" required/>
+                                                            <div style="color:red"
+                                                                 th:if="${#fields.hasErrors('lastName')}"
+                                                                 th:errors="*{lastName}">lastName Error
+                                                            </div>
+                                                            <div class="invalid-feedback">Please, enter your last
+                                                                name!
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12">
+                                                            <label for="age" class="form-label">Your Age</label>
+                                                            <input type="number" class="form-control" th:field="*{age}"
+                                                                   id="age"
+                                                                   placeholder="age" required/>
+                                                            <div style="color:red" th:if="${#fields.hasErrors('age')}"
+                                                                 th:errors="*{age}">
+                                                                age
+                                                                Error
+                                                            </div>
+                                                            <div class="invalid-feedback">Please, enter your age!</div>
+                                                        </div>
+
+                                                        <div class="col-12">
+                                                            <label for="email" class="form-label">Your Email</label>
+                                                            <input type="email" name="email" class="form-control"
+                                                                   th:field="*{email}"
+                                                                   id="email" placeholder="email" required/>
+                                                            <div style="color:red" th:if="${#fields.hasErrors('email')}"
+                                                                 th:errors="*{email}">
+                                                                email Error
+                                                            </div>
+                                                            <div class="invalid-feedback">Please enter a valid Email
+                                                                address!
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12">
+                                                            <label for="password" class="form-label">Password</label>
+                                                            <input type="password" th:field="*{password}"
+                                                                   name="password"
+                                                                   class="form-control" id="password" required>
+                                                            <div style="color:red"
+                                                                 th:if="${#fields.hasErrors('password')}"
+                                                                 th:errors="*{password}">Password Error
+                                                            </div>
+                                                            <div class="invalid-feedback">Please enter your password!
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" name="terms"
+                                                                       type="checkbox" value=""
+                                                                       id="acceptTerms" required>
+                                                                <label class="form-check-label" for="acceptTerms">I
+                                                                    agree and accept the <a
+                                                                            href="#">terms and conditions</a></label>
+                                                                <div class="invalid-feedback">You must agree before
+                                                                    submitting.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <button class="btn btn-primary w-100" type="submit">Create
+                                                                Account
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <p class="small mb-0">Already have an account? <a
+                                                                    href="/auth/login">Log in</a>
+                                                            </p>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </section>
+
+                        </div>
+                    </main>
                 </div>
             </div>
         </div>
