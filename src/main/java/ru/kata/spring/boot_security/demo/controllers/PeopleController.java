@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.models.Person;
 import ru.kata.spring.boot_security.demo.services.PeopleService;
 import ru.kata.spring.boot_security.demo.services.RegistrationService;
+import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.util.EmailValidator;
 
 import javax.validation.Valid;
@@ -29,48 +30,44 @@ import java.io.InputStreamReader;
 public class PeopleController {
 
     private final PeopleService peopleService;
+    private final RoleService roleService;
     private final RegistrationService registrationService;
     private final EmailValidator emailValidator;
 
     @Autowired
-    public PeopleController(PeopleService peopleService, RegistrationService registrationService, EmailValidator emailValidator) {
+    public PeopleController(PeopleService peopleService, RoleService roleService, RegistrationService registrationService, EmailValidator emailValidator) {
         this.peopleService = peopleService;
+        this.roleService = roleService;
         this.registrationService = registrationService;
         this.emailValidator = emailValidator;
     }
 
     @GetMapping()
-    public String index(Model model, Authentication authentication) {
+    public String index(@ModelAttribute("person") Person person, Model model, Authentication authentication) {
         model.addAttribute("people", peopleService.findAll());
-        model.addAttribute("currentPerson", authentication.getPrincipal());
+        model.addAttribute("currentPerson", (Person) authentication.getPrincipal());
+        model.addAttribute("roles", roleService.getRoles());
         return "admin/index";
-    }
-
-    @GetMapping("/index2")
-    public String index2(Model model, Authentication authentication) {
-        model.addAttribute("person", peopleService.findAll());
-        model.addAttribute("currentPerson", authentication.getPrincipal());
-        return "admin/index2";
     }
 
     @GetMapping("/{id}")
     public String showAdmin(@PathVariable("id") long id, Model model) {
-        model.addAttribute("person", peopleService.findOne(id));
+        model.addAttribute("person", peopleService.findById(id));
         return "admin/show";
-    }
-
-    @GetMapping("/new")
-    public String newPerson(@ModelAttribute("person") Person person) {
-        return "admin/new";
     }
 
     @PostMapping()
     public String create(@ModelAttribute("person") @Valid Person person,
-                         BindingResult bindingResult) {
+                         BindingResult bindingResult, Model model, Authentication authentication) {
         emailValidator.validate(person, bindingResult);
 
-        if (bindingResult.hasErrors())
-            return "admin/new";
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("people", peopleService.findAll());
+            model.addAttribute("currentPerson", (Person) authentication.getPrincipal());
+            model.addAttribute("roles", roleService.getRoles());
+            return "/admin/indexNewUser";
+        }
+
 
         registrationService.register(person);
         return "redirect:/admin";
@@ -78,22 +75,21 @@ public class PeopleController {
 
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") long id) {
-        model.addAttribute("person", peopleService.findOne(id));
+        model.addAttribute("person", peopleService.findById(id));
         return "admin/edit";
     }
 
-    @PatchMapping("/{id}")
-    public String update(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult,
-                         @PathVariable("id") long id) {
-        Person originPerson = peopleService.findOne(id);
+    @PatchMapping("/edit")
+    public String update(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult) {
+        Person originPerson = peopleService.findById(person.getId());
         if (!person.getEmail().equals(originPerson.getEmail())) {
             emailValidator.validate(person, bindingResult);
         }
 
         if (bindingResult.hasErrors())
-            return "admin/edit";
+            return "admin/index";
 
-        registrationService.update(id, person);
+        registrationService.update(person.getId(), person);
         return "redirect:/admin";
     }
 
@@ -104,55 +100,4 @@ public class PeopleController {
     }
 
 
-    @GetMapping("/assets/css/{code}.css")
-    @ResponseBody
-    public ResponseEntity<String> styles(@PathVariable("code") String code) throws IOException {
-        StringBuffer sb = new StringBuffer();
-        // получаем содержимое файла из папки ресурсов в виде потока
-        try (
-                InputStream is = getClass().getClassLoader().getResourceAsStream("static/assets/css/" + code + ".css");
-                // преобразуем поток в строку
-                BufferedReader bf = new BufferedReader(new InputStreamReader(is));
-        ) {
-
-            String line = null;
-            while ((line = bf.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-        }
-
-
-        // создаем объект, в котором будем хранить HTTP заголовки
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        // добавляем заголовок, который хранит тип содержимого
-        httpHeaders.add("Content-Type", "text/css; charset=utf-8");
-        // возвращаем HTTP ответ, в который передаем тело ответа, заголовки и статус 200 Ok
-        return new ResponseEntity<String>(sb.toString(), httpHeaders, HttpStatus.OK);
-    }
-
-    @GetMapping("/assets/js/{code}.js")
-    @ResponseBody
-    public ResponseEntity<String> js(@PathVariable("code") String code) throws IOException {
-        StringBuffer sb = new StringBuffer();
-        // получаем содержимое файла из папки ресурсов в виде потока
-        try (
-                InputStream is = getClass().getClassLoader().getResourceAsStream("static/assets/js/" + code + ".js");
-                // преобразуем поток в строку
-                BufferedReader bf = new BufferedReader(new InputStreamReader(is));
-        ) {
-
-            String line = null;
-            while ((line = bf.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-        }
-
-
-        // создаем объект, в котором будем хранить HTTP заголовки
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        // добавляем заголовок, который хранит тип содержимого
-        httpHeaders.add("Content-Type", "text/css; charset=utf-8");
-        // возвращаем HTTP ответ, в который передаем тело ответа, заголовки и статус 200 Ok
-        return new ResponseEntity<String>(sb.toString(), httpHeaders, HttpStatus.OK);
-    }
 }

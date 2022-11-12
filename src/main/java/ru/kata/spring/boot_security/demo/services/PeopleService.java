@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.services;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,7 +9,6 @@ import ru.kata.spring.boot_security.demo.models.Person;
 import ru.kata.spring.boot_security.demo.repositories.PeopleRepository;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -26,7 +24,7 @@ public class PeopleService implements UserDetailsService {
         return peopleRepository.findAll();
     }
 
-    public Person findOne(long id) {
+    public Person findById(long id) {
         Optional<Person> byId = peopleRepository.findById(id);
         return byId.orElse(null);
     }
@@ -44,9 +42,11 @@ public class PeopleService implements UserDetailsService {
 
     @Transactional
     public void delete(long id) {
-        Person one = findOne(id);
-        one.getRoles().clear();
-        peopleRepository.deleteById(id);
+        if (id != 1) {
+            Person one = findById(id);
+            one.getRoles().clear();
+            peopleRepository.deleteById(id);
+        }
     }
 
     @Transactional

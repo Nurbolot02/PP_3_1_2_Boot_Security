@@ -30,21 +30,28 @@ public class RegistrationService {
 
     @Transactional
     public void register(Person person) {
+
         person.setPassword(passwordEncoder.encode(person.getPassword()));
-        Optional<Role> byId = roleRepository.findById((byte) 1);
-        if (byId.isEmpty()) {
-            throw new RuntimeException("Role Not found exception");
+
+        person.addRole(roleRepository.findByRole("ROLE_USER"));
+        if ( person.role() != null && person.role().equals("ROLE_ADMIN")) {
+            person.addRole(roleRepository.findByRole(person.role()));
         }
-        person.createRoles(byId.get());
         peopleRepository.save(person);
     }
 
     @Transactional
     public void update(long id, Person person) {
-        Person byId1 = peopleRepository.getById(id);
-        person.setId(id);
-        person.setRoles(byId1.getRoles());
-        person.setPassword(passwordEncoder.encode(person.getPassword()));
-        peopleRepository.save(person);
+        Optional<Person> byId1 = peopleRepository.findById(id);
+        if (byId1.isPresent()) {
+            if (person.getId() != 1) {
+                person.setPassword(passwordEncoder.encode(person.getPassword()));
+                person.addRole(roleRepository.findByRole("ROLE_USER"));
+                if (person.role().equals("ROLE_ADMIN")) {
+                    person.addRole(roleRepository.findByRole(person.role()));
+                }
+                peopleRepository.save(person);
+            }
+        }
     }
 }

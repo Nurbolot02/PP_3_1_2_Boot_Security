@@ -33,38 +33,27 @@ public class AuthController {
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") long id, Model model, Authentication authentication) {
-        Person originPerson = peopleService.findOne(id);
-        if (originPerson.equalsN(authentication.getPrincipal())) {
-            model.addAttribute("person", originPerson);
-            return "auth/show";
-        }
-        return "redirect:/auth/login";
-    }
-
-    @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") long id, Authentication authentication) {
-        Person originPerson = peopleService.findOne(id);
-        if (originPerson.equalsN(authentication.getPrincipal())) {
-            model.addAttribute("person", originPerson);
-            return "auth/edit";
-        }
-        return "redirect:/auth/login";
-    }
-
-    @PatchMapping("/{id}")
-    public String update(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult,
-                         @PathVariable("id") long id, Authentication authentication) {
-        Person originPerson = peopleService.findOne(id);
-        if (originPerson.equalsN(authentication.getPrincipal())) {
-            if (!person.getEmail().equals(originPerson.getEmail())) {
-                emailValidator.validate(person, bindingResult);
+        try {
+            Person originPerson = peopleService.findById(id);
+            if (originPerson.equalsN(authentication.getPrincipal())) {
+                model.addAttribute("user", originPerson);
+                return "/user/index";
             }
+        } catch (NullPointerException e) {
+        }
+        return "redirect:/auth/login";
+    }
 
-            if (bindingResult.hasErrors())
-                return "auth/edit";
-
-            registrationService.update(id, person);
-            return String.format("redirect:/auth/%d", id);
+    @GetMapping("/user")
+    public String user(Model model, Authentication authentication) {
+        try {
+            Person person = (Person) authentication.getPrincipal();
+            Person originPerson = peopleService.findById(person.getId());
+            if (originPerson.equalsN(person)) {
+                model.addAttribute("user", originPerson);
+                return "/user/index";
+            }
+        } catch (NullPointerException e) {
         }
         return "redirect:/auth/login";
     }
@@ -88,15 +77,6 @@ public class AuthController {
             return "/auth/registration";
         registrationService.register(person);
 
-        return "redirect:/auth/login";
-    }
-
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") long id, Authentication authentication) {
-        Person originPerson = peopleService.findOne(id);
-        if (originPerson.equalsN(authentication.getPrincipal())) {
-            peopleService.delete(id);
-        }
         return "redirect:/auth/login";
     }
 }

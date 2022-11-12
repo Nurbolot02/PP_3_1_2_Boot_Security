@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.models;
 
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -57,13 +56,24 @@ public class Person implements UserDetails {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Role> roles;
 
-    public void createRoles(Role role) {
-        this.roles = new ArrayList<Role>();
+    @Transient
+    private String role;
+
+    public void addRole(Role role){
+        if (roles == null){
+            roles = new ArrayList<>(2);
+        }
         roles.add(role);
     }
 
-    public void createRoles(List<Role> roles) {
-        this.roles = new ArrayList<Role>(roles);
+    public String role() {
+        return role;
+    }
+
+    public String getStringRoles() {
+        StringBuilder stringRoles = new StringBuilder();
+        getRoles().forEach(role -> stringRoles.append(role.getSimpleName()).append(" "));
+        return stringRoles.toString();
     }
 
     @Override
