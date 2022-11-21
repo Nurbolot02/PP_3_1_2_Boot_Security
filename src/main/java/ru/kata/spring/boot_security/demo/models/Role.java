@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private byte id;
+    private int id;
     private String role;
 
     public Role(String role) {
@@ -25,5 +25,9 @@ public class Role implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return role;
+    }
+
+    public String getSimpleName() {
+        return role.substring(role.indexOf("_") + 1);
     }
 }

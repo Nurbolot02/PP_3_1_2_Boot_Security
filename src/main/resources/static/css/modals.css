@@ -1,0 +1,49 @@
+.modal-sheet .modal-dialog {
+  width: 380px;
+  transition: bottom .75s ease-in-out;
+}
+.modal-sheet .modal-footer {
+  padding-bottom: 2rem;
+}
+
+.modal-alert .modal-dialog {
+  width: 380px;
+}
+
+.modal-tour .modal-dialog {
+  width: 380px;
+}
+
+.modal-body {
+  position: absolute;
+  transform: translate(-50%,-50%);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  box-shadow: 4px 4px 10px 1px rgba(0, 0, 0, 0.2);
+  top: 50%;
+  left: 50%;
+  width: 500px;
+  min-height: 500px;
+  background-color: white;
+  border-radius: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-hidden {
+  display: none;
+}
+
+.modal-form {
+
+}
+
+.btn-primary-close {
+  background-color: gray;
+  border: 0;
+}
+
+.btn-primary-close:hover {
+  background-color: #a08f8f;
+}

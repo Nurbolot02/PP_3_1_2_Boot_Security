@@ -107,14 +107,14 @@
     <div class="block-content">
         <h1>Admin panel</h1>
         <ul class="admin-nav">
-            <li class="admin-nav-item admin-nav-item-usertable admin-nav-item-current">
+            <li class="admin-nav-item admin-nav-item-usertable">
                 <a href="#"> Users table </a>
             </li>
-            <li class="admin-nav-item admin-nav-item-newuser">
+            <li class="admin-nav-item admin-nav-item-newuser admin-nav-item-current">
                 <a href="#"> New User </a>
             </li>
         </ul>
-        <div class="add-user-panel">
+        <div class="add-user-panel admin-panel-current">
             <div class="panel-head">Add new user</div>
             <div class="panel-body panel-body-adduser">
 
@@ -178,19 +178,6 @@
                                     <div class="invalid-feedback">Please enter your password!</div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="role-modal" class="form-label">Role</label>
-                                    <select class="form-select" id="role" th:field="${currentPerson.role}">
-                                        <option th:value="${roles.get(0).role}" th:text="${roles.get(0).getSimpleName()}" selected></option>
-                                        <option
-                                                th:each="r : ${roles}"
-                                                th:unless="${r.getId()} == 1"
-                                                th:value="${r.getRole()}"
-                                                th:text="${r.getSimpleName()}"
-                                        ></option>
-                                    </select>
-                                </div>
-
                                 <div class="col-12">
                                     <button class="btn btn-primary w-100" type="submit">Add user</button>
                                 </div>
@@ -203,7 +190,7 @@
 
             </div>
         </div>
-        <div class="user-table admin-panel-current">
+        <div class="user-table">
             <div class="csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"></div>
             <div class="panel-head">All users</div>
             <div class="panel-body">
@@ -230,15 +217,20 @@
                             <button
                                     type="button"
                                     th:name="*{u.id}"
-                                    class="user-button user-edit-button btn btn-warning"
+                                    class="user-button user-edit-button"
                             >
                                 Edit
                             </button>
                         </td>
                         <td>
-                            <form  th:method="DELETE" th:action="@{/admin/{id}(id=${u.getId()})}">
-                                <input class="btn btn-danger" type="submit" value="Delete"/>
-                            </form>
+                            <button
+                                    type="button"
+                                    th:name="*{u.id}"
+                                    class="user-button user-delete-button"
+                                    th:unless="${u.id == currentPerson.id}"
+                            >
+                                Delete
+                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -248,7 +240,7 @@
     </div>
 </main>
 <div class="modal-body modal-hidden">
-    <form class="add-user-form modal-form" th:method="PATCH" th:action="@{/admin/edit/}" th:object="${currentPerson}">
+    <form class="add-user-form modal-form" th:method="POST" th:action="@{/admin/edit/}" th:object="${currentPerson}">
         <div style="color: red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</div>
         <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
         <div class="mb-3">
@@ -317,8 +309,9 @@
         </div>
         <div class="mb-3">
             <label for="role-modal" class="form-label">Role</label>
-            <select class="form-select" id="role-modal" th:field="${currentPerson.role}">
-                <option th:value="${roles.get(0).role}" th:text="${roles.get(0).getSimpleName()}" selected></option>
+            <select class="form-select" id="role-modal">
+                <option th:value="${roles.get(1).getSimpleName()}" th:text="${roles.get(1).getSimpleName()}"
+                        selected></option>
                 <option
                         th:each="r : ${roles}"
                         th:unless="${r.getId()} == 1"

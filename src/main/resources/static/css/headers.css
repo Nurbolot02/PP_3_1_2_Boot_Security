@@ -1,0 +1,149 @@
+a {
+  text-decoration: none;
+}
+
+.body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-control-dark {
+  border-color: gray;
+}
+.form-control-dark:focus {
+  border-color: #fff;
+  box-shadow: 0 0 0 .25rem rgba(255, 255, 255, .25);
+}
+
+.text-small {
+  font-size: 85%;
+}
+
+.dropdown-toggle {
+  outline: 0;
+}
+
+.header_username {
+  font-weight: 700;
+  padding-right: 10px;
+}
+
+.header_username::after {
+  content:"with roles:";
+  font-weight: 400;
+  margin: 0 10px;
+}
+
+.main-content {
+  display: flex;
+  box-sizing: border-box;
+  flex-grow: 1;
+}
+
+.block-navigate {
+  background-color: white;
+  width: 200px;
+}
+
+.block-content {
+  flex-grow: 1;
+  box-sizing: border-box;
+  padding: 15px 30px;
+  background-color: rgb(246, 245, 239);
+}
+
+.block-navigat-list {
+  padding: 0;
+  list-style-type: none;
+  padding-top: 10px;
+}
+
+.block-navigate-item {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 15px;
+  min-height: 40px;
+  color: royalblue;
+
+}
+
+.block-navigate-item-current {
+  color: white;
+  background-color: royalblue;
+  border-radius: 3px;
+}
+
+.admin-nav {
+  list-style: none;
+  display: flex;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-nav-item {
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  color: royalblue;
+}
+
+.admin-nav-item-current {
+  color: black;
+  background-color: white;
+  border: 1px solid black;
+  border-bottom: 0;
+}
+
+.add-user-panel {
+  display: none;
+}
+
+.user-table {
+  display: none;
+}
+
+.admin-panel-current {
+  display: block;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  height: 45px;
+  font-weight: 700;
+  border: 1px solid gray;
+}
+
+.panel-body {
+  background-color: white;
+  padding: 10px 20px;
+  border: 1px solid black;
+  border-top: 0;
+}
+
+.panel-body-adduser {
+  display: flex;
+  justify-content: center;
+}
+
+.add-user-form {
+  max-width: 600px;
+  min-width: 400px;
+}
+
+.user-button {
+  border: 0;
+  border-radius: 3px;
+  color: white;
+}
+
+.user-edit-button {
+  background-color: rgb(90, 201, 164);
+}
+
+.user-delete-button {
+  background-color: crimson;
+}

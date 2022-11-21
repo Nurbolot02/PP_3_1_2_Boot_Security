@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Show</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <p th:text="${'id: ' + person.getId()}">VALUE</p>
-<p th:text="${'name: ' + person.getName()}">VALUE</p>
+<p th:text="${'first name: ' + person.getFirstName()}">VALUE</p>
+<p th:text="${'last name: ' + person.getLastName()}">VALUE</p>
+<p th:text="${'age : ' + person.getAge()}">VALUE</p>
 <p th:text="${'Email: ' + person.getEmail()}">VALUE</p>
 <div th:each="role : ${person.getRoles()}">
     <p th:text="${role.getRole()}">Roles</p>

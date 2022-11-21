@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.services;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,7 +9,6 @@ import ru.kata.spring.boot_security.demo.models.Person;
 import ru.kata.spring.boot_security.demo.repositories.PeopleRepository;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -22,21 +20,11 @@ public class PeopleService implements UserDetailsService {
         this.peopleRepository = peopleRepository;
     }
 
-    public boolean isAdminOrPerson(Authentication authentication, long id) {
-        Person person = (Person) authentication.getPrincipal();
-        boolean isAdmin = Objects.requireNonNull(person).getRoles().stream().map(x -> x.getRole().equals("ROLE_ADMIN")).findAny().orElse(false);
-        Person per = findOne(id);
-        if (person.getPassword().equals(per.getPassword()) || isAdmin) {
-            return true;
-        }
-        return false;
-    }
-
     public List<Person> findAll() {
         return peopleRepository.findAll();
     }
 
-    public Person findOne(long id) {
+    public Person findById(long id) {
         Optional<Person> byId = peopleRepository.findById(id);
         return byId.orElse(null);
     }
@@ -54,17 +42,19 @@ public class PeopleService implements UserDetailsService {
 
     @Transactional
     public void delete(long id) {
-        Person one = findOne(id);
-        one.getRoles().clear();
-        peopleRepository.deleteById(id);
+        if (id != 1) {
+            Person one = findById(id);
+            one.getRoles().clear();
+            peopleRepository.deleteById(id);
+        }
     }
 
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Person> byName = peopleRepository.findByName(username);
+        Optional<Person> byName = peopleRepository.findByEmail(username);
         if (byName.isEmpty()) {
-            throw new UsernameNotFoundException(String.format("User with name: %s not found", username));
+            throw new UsernameNotFoundException(String.format("User with email: %s not found", username));
         }
         return byName.get();
     }
